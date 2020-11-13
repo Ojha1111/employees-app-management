@@ -1,5 +1,5 @@
 
-//*The JSON structure consists of a employees object, which has two datasets assigned. Each customer consists of seven properties: id, description, first_name, //last_name, email, phone, and address*//
+//*The structure consists of a employees object, which has two datasets assigned. Each customer consists of seven properties: id, description, first_name, //last_name, email, phone, and address*//
 
 
 {
