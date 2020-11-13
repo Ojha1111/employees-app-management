@@ -1,0 +1,387 @@
+
+//*The JSON structure consists of a employees object, which has two datasets assigned. Each customer consists of seven properties: id, description, first_name, //last_name, email, phone, and address*//
+
+
+{
+    "employees": [
+        {
+            "id": 1,
+            "first_name": "employee1",
+            "last_name": "employee1",
+            "email": "employee1@mail.com",
+            "phone": "00000000000",
+            "address": "employee1 Address",
+            "description": "employee1 description"
+        },
+        {
+            "id": 2,
+            "first_name": "employee2",
+            "last_name": "employee2",
+            "email": "employee2@mail.com",
+            "phone": "00000000000",
+            "address": "employee2 Adress",
+            "description": "employee2 Description"
+        }
+        {
+            "id": 3,
+            "first_name": "employee3",
+            "last_name": "employee3",
+            "email": "employee3@mail.com",
+            "phone": "00000000000",
+            "address": "employee3 Adress",
+            "description": "employee3 Description"
+        }
+        {
+            "id": 4,
+            "first_name": "employee4",
+            "last_name": "employee4",
+            "email": "employee4@mail.com",
+            "phone": "00000000000",
+            "address": "employee4 Adress",
+            "description": "employee4 Description"
+        }
+        {
+            "id": 5,
+            "first_name": "employee5",
+            "last_name": "employee5",
+            "email": "employee5@mail.com",
+            "phone": "00000000000",
+            "address": "employee5 Adress",
+            "description": "employee5 Description"
+        }
+    ]
+}
+the above code mentioned will display the list of employees.
+
+NOW i am going to   create the required React components for the application. This will include components to create, display, and edit the details of a particular customer in the database respectively.i will  also build some of the TypeScript interfaces for the  application.where i have the React application,i have also created two file name edit.tsx and create.tsx These files are React reusable components that will render the forms and hold all the business logic for creating and editing the details of a customer respectively.
+
+in Create.tsx file i have writen the below code for the functioning
+
+import * as React from 'react';
+import axios from 'axios';
+import { RouteComponentProps, withRouter } from 'react-router-dom';
+
+export interface IValues {
+    first_name: string,
+    last_name: string,
+    email: string,
+    phone: string,
+    address: string,
+    description: string,
+}
+export interface IFormState {
+    [key: string]: any;
+    values: IValues[];
+    submitSuccess: boolean;
+    loading: boolean;
+}
+
+class EditEmployees extends React.Component<RouteComponentProps<any>, IFormState> {
+    constructor(props: RouteComponentProps) {
+        super(props);
+        this.state = {
+            id: this.props.match.params.id,
+            customer: {},
+            values: [],
+            loading: false,
+            submitSuccess: false,
+        }
+    }
+
+           public componentDidMount(): void {
+        axios.get(`http://localhost:5000/customers/${this.state.id}`).then(data => {
+            this.setState({ customer: data.data });
+        })
+    }
+
+    private processFormSubmission = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
+        e.preventDefault();
+        this.setState({ loading: true });
+        axios.patch(`http://localhost:5000/customers/${this.state.id}`, this.state.values).then(data => {
+            this.setState({ submitSuccess: true, loading: false })
+            setTimeout(() => {
+                this.props.history.push('/');
+            }, 1500)
+        })
+    }
+
+    private setValues = (values: IValues) => {
+        this.setState({ values: { ...this.state.values, ...values } });
+    }
+    private handleInputChanges = (e: React.FormEvent<HTMLInputElement>) => {
+        e.preventDefault();
+        this.setValues({ [e.currentTarget.id]: e.currentTarget.value })
+    }
+
+
+
+
+
+
+///// ////////////////////////////in above code i have cfeated a file name component where i have written a code for upgradation ,,deletion,,to edit the employees characterstics so it is in folder name called component and also there are home pageto retrive all the correct and update information which will be comes into the display of the emplyees list///////////////////////////////////
+
+    public render() {
+        const { submitSuccess, loading } = this.state;
+        return (
+            <div className="App">
+                {this.state.Employee &&
+                    <div>
+                        < h1 > Employee List Management App</h1>
+                        <p> Built with React.js and TypeScript </p>
+
+                        <div>
+                            <div className={"col-md-12 form-wrapper"}>
+                                <h2> Edit Employee </h2>
+                                {submitSuccess && (
+                                    <div className="alert alert-info" role="alert">
+                                        Employee's details has been edited successfully </div>
+                                )}
+                                <form id={"create-post-form"} onSubmit={this.processFormSubmission} noValidate={true}>
+                                    <div className="form-group col-md-12">
+                                        <label htmlFor="first_name"> First Name </label>
+                                        <input type="text" id="first_name" defaultValue={this.state.Employee.first_name} onChange={(e) => this.handleInputChanges(e)} name="first_name" className="form-control" placeholder="Enter Employee's first name" />
+                                    </div>
+                                    <div className="form-group col-md-12">
+                                        <label htmlFor="last_name"> Last Name </label>
+                                        <input type="text" id="last_name" defaultValue={this.state.Employee.last_name} onChange={(e) => this.handleInputChanges(e)} name="last_name" className="form-control" placeholder="Enter Employee's last name" />
+                                    </div>
+                                    <div className="form-group col-md-12">
+                                        <label htmlFor="email"> Email </label>
+                                        <input type="email" id="email" defaultValue={this.state.Employee.email} onChange={(e) => this.handleInputChanges(e)} name="email" className="form-control" placeholder="Enter Employee's email address" />
+                                    </div>
+                                    <div className="form-group col-md-12">
+                                        <label htmlFor="phone"> Phone </label>
+                                        <input type="text" id="phone" defaultValue={this.state.Employee.phone} onChange={(e) => this.handleInputChanges(e)} name="phone" className="form-control" placeholder="Enter Employee's phone number" />
+                                    </div>
+                                    <div className="form-group col-md-12">
+                                        <label htmlFor="address"> Address </label>
+                                        <input type="text" id="address" defaultValue={this.state.Employee.address} onChange={(e) => this.handleInputChanges(e)} name="address" className="form-control" placeholder="Enter Employee's address" />
+                                    </div>
+                                    <div className="form-group col-md-12">
+                                        <label htmlFor="description"> Description </label>
+                                        <input type="text" id="description" defaultValue={this.state.Employee.description} onChange={(e) => this.handleInputChanges(e)} name="description" className="form-control" placeholder="Enter Description" />
+                                    </div>
+                                    <div className="form-group col-md-4 pull-right">
+                                        <button className="btn btn-success" type="submit">
+                                            Edit Customer </button>
+                                        {loading &&
+                                            <span className="fa fa-circle-o-notch fa-spin" />
+                                        }
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        )
+    }
+
+
+
+
+}
+
+
+
+//////   i have  created a form to edit the details of a particular employee, and then populated the input fields within that form with the employees details that your application’s state obtained. Similarly to the Create component, changes made to all the input fields will be handled by the handleInputChanges() method
+////////////////////////////////
+import * as React from 'react';
+import { Link, RouteComponentProps } from 'react-router-dom';
+import axios from 'axios';
+
+interface IState {
+    customers: any[];
+}
+
+export default class Home extends React.Component<RouteComponentProps, IState> {
+    constructor(props: RouteComponentProps) {
+        super(props);
+        this.state = { customers: [] }
+    }
+    public componentDidMount(): void {
+        axios.get(`http://localhost:5000/customers`).then(data => {
+            this.setState({ customers: data.data })
+        })
+    }
+    public deleteCustomer(id: number) {
+        axios.delete(`http://localhost:5000/customers/${id}`).then(data => {
+            const index = this.state.customers.findIndex(customer => customer.id === id);
+            this.state.customers.splice(index, 1);
+            this.props.history.push('/');
+        })
+    }
+}////
+
+
+
+}
+export default withRouter(EditEmployees)
+
+class Create extends React.Component<RouteComponentProps, IFormState> {
+    constructor(props: RouteComponentProps) {
+        super(props);
+        this.state = {
+            first_name: '',
+            last_name: '',
+            email: '',
+            phone: '',
+            address: '',
+            description: '',
+            values: [],
+            loading: false,
+            submitSuccess: false,
+        }
+
+
+
+        ////////////// componentDidMount() method, which is a lifecycle method that is being called when the component is created. The method takes the id obtained from the route parameter to identify a particular customer as a parameter, uses it to retrieve their details from the database and then populates the form with it. Furthermore, you add methods to process form submission and handle changes made to the values of the input fields.
+        ///////////////////////////////////////////////////////////////////////////
+        private processFormSubmission = (e: React.FormEvent<HTMLFormElement>): void => {
+          e.preventDefault();
+          this.setState({ loading: true });
+          const formData = {
+              first_name: this.state.first_name,
+              last_name: this.state.last_name,
+              email: this.state.email,
+              phone: this.state.phone,
+              address: this.state.address,
+              description: this.state.description,
+          }
+          this.setState({ submitSuccess: true, values: [...this.state.values, formData], loading: false });
+          axios.post(`http://localhost:5000/customers`, formData).then(data => [
+              setTimeout(() => {
+                  this.props.history.push('/');
+              }, 1500)
+          ]);
+      }
+
+      private handleInputChanges = (e: React.FormEvent<HTMLInputElement>) => {
+          e.preventDefault();
+          this.setState({
+              [e.currentTarget.name]: e.currentTarget.value,
+      })
+
+             public render() {
+      const { submitSuccess, loading } = this.state;
+      return (
+          <div>
+              <div className={"col-md-12 form-wrapper"}>
+                  <h2> Create Post </h2>
+                  {!submitSuccess && (
+                      <div className="alert alert-info" role="alert">
+                          Fill the form below to create a new post
+                  </div>
+                  )}
+                  {submitSuccess && (
+                      <div className="alert alert-info" role="alert">
+                          The form was successfully submitted!
+                          </div>
+                  )}
+                  <form id={"create-post-form"} onSubmit={this.processFormSubmission} noValidate={true}>
+                      <div className="form-group col-md-12">
+                          <label htmlFor="first_name"> First Name </label>
+                          <input type="text" id="first_name" onChange={(e) => this.handleInputChanges(e)} name="first_name" className="form-control" placeholder="Enter customer's first name" />
+                      </div>
+                      <div className="form-group col-md-12">
+                          <label htmlFor="last_name"> Last Name </label>
+                          <input type="text" id="last_name" onChange={(e) => this.handleInputChanges(e)} name="last_name" className="form-control" placeholder="Enter customer's last name" />
+                      </div>
+                      <div className="form-group col-md-12">
+                          <label htmlFor="email"> Email </label>
+                          <input type="email" id="email" onChange={(e) => this.handleInputChanges(e)} name="email" className="form-control" placeholder="Enter customer's email address" />
+                      </div>
+                      <div className="form-group col-md-12">
+                          <label htmlFor="phone"> Phone </label>
+                          <input type="text" id="phone" onChange={(e) => this.handleInputChanges(e)} name="phone" className="form-control" placeholder="Enter customer's phone number" />
+                      </div>
+                      <div className="form-group col-md-12">
+                          <label htmlFor="address"> Address </label>
+                          <input type="text" id="address" onChange={(e) => this.handleInputChanges(e)} name="address" className="form-control" placeholder="Enter customer's address" />
+                      </div>
+                      <div className="form-group col-md-12">
+                          <label htmlFor="description"> Description </label>
+                          <input type="text" id="description" onChange={(e) => this.handleInputChanges(e)} name="description" className="form-control" placeholder="Enter Description" />
+                      </div>
+                      <div className="form-group col-md-4 pull-right">
+                          <button className="btn btn-success" type="submit">
+                              Create Customer
+                          </button>
+                          {loading &&
+                              <span className="fa fa-circle-o-notch fa-spin" />
+                          }
+                      </div>
+                  </form>
+              </div>
+          </div>
+      )
+  }
+
+
+
+
+
+
+  }
+    }
+}
+export default withRouter(Create)
+
+    values: [],
+          loading: false,
+          submitSuccess: false,
+      }
+  }
+
+  
+/////////////////Open your Edit.tsx file within the customer folder, and start by adding the following content to import React, axios, and also define TypeScript interfaces:////////////////////////
+
+
+
+import * as React from 'react';
+import { RouteComponentProps, withRouter } from 'react-router-dom';
+import axios from 'axios';
+
+export interface IValues {
+    [key: string]: any;
+}
+export interface IFormState {
+    id: number,
+    customer: any;
+    values: IValues[];
+    submitSuccess: boolean;
+    loading: boolean;
+}
+
+/////////////
+import * as React from 'react';
+import './App.css';
+import { Switch, Route, withRouter, RouteComponentProps, Link } from 'react-router-dom';
+import Home from './components/Home';
+import Create from './components/customer/Create';
+import EditCustomer from './components/customer/Edit';
+
+class App extends React.Component<RouteComponentProps<any>> {
+  public render() {
+    return (
+      <div>
+        <nav>
+          <ul>
+            <li>
+              <Link to={'/'}> Home </Link>
+            </li>
+            <li>
+              <Link to={'/create'}> Create Customer </Link>
+            </li>
+          </ul>
+        </nav>
+        <Switch>
+          <Route path={'/'} exact component={Home} />
+          <Route path={'/create'} exact component={Create} />
+          <Route path={'/edit/:id'} exact component={EditCustomer} />
+        </Switch>
+      </div>
+    );
+  }
+}
+export default withRouter(App);
